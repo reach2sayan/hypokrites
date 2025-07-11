@@ -11,9 +11,9 @@
 
 template <typename... TCallables> class MessageHandler {
   std::tuple<TCallables...> handlers;
+  MessageHandler or_else(MessageHandler other);
 
 public:
-  MessageHandler or_else(MessageHandler other);
   MessageHandler operator|(MessageHandler other) {
     return or_else(std::move(other));
   }

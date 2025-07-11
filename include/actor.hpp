@@ -24,9 +24,9 @@ private:
 public:
   ActorBase(ActorSystem &sys_)
       : addr(boost::uuids::random_generator()()), sys(sys_) {}
-  virtual auto address() -> actor_address_t const final { return addr; }
-  virtual auto system() -> ActorSystem & final { return sys; }
-  ~ActorBase() = default;
+  virtual actor_address_t address() const final { return addr; }
+  virtual ActorSystem & system() final { return sys; }
+  virtual ~ActorBase() = default;
 };
 
 template <typename TActor, typename>
