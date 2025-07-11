@@ -6,13 +6,13 @@ set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
 set(BUILD_SHARED_LIBS ON)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
-set(CMAKE_MACOSX_RPATH 1)
 
-include(CPack)
-include(CTest)
 find_package(Boost REQUIRED)
-set(HEADERS include/abstract_actor.hpp
-        include/abstract_actor.hpp)
+set(HEADERS include/actor.hpp
+        include/mailbox.hpp
+        include/message_handler.hpp
+        include/monitors.hpp
+        include/utility/meta.hpp)
 
 add_library(hypokrites ${HEADERS} src/main.cpp
         src/main.cpp)
@@ -26,5 +26,3 @@ target_include_directories(${PROJECT_NAME}
         INTERFACE ${PROJECT_SOURCE_DIR}/include)
 
 include_directories(${PROJECT_NAME})
-add_subdirectory(test)
-enable_testing()
