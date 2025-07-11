@@ -15,7 +15,7 @@
 using mail_id_t = boost::uuids::uuid;
 
 class Mail {
-  std::shared_ptr<ActorBase> actor;
+  ActorBase* actor;
   mail_id_t id;
   std::stack<std::function<void()>> stages;
   std::string content;

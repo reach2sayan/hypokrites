@@ -7,11 +7,11 @@
 #pragma once
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_generators.hpp>
-#include <memory>
 #include <list>
+#include <memory>
 
-#include "utility/meta.hpp"
 #include "monitors.hpp"
+#include "utility/meta.hpp"
 
 using actor_address_t = boost::uuids::uuid;
 class ActorSystem;
@@ -29,25 +29,26 @@ public:
   ~ActorBase() = default;
 };
 
-template<typename TActor, typename>
-class MonitoredActor: public IMonitor<TActor> {
-  std::list<TActor*> monitors;
+template <typename TActor, typename>
+class MonitoredActor : public IMonitor<TActor> {
+  std::list<TActor *> monitors;
+
 public:
-  virtual void add_monitor(TActor* observer) override {
+  virtual void add_monitor(TActor *observer) override {
     monitors.push_back(std::move(observer));
   }
-  virtual void remove_monitor(TActor* observer) override {
-    monitors.remove_if([observer](auto&& ptr) { return ptr.get() == observer;});
+  virtual void remove_monitor(TActor *observer) override {
+    monitors.remove(observer);
   }
   virtual void notify() override {
-//TODO To be implemented
+    // TODO To be implemented
   }
 };
 
 // extend<ar, T>::with<ob, fo> == fo<ob<ar, T>, T>
 // IMonitor<ActorBase>
 class Actor : public extend<ActorBase>::with<MonitoredActor> {
-  const char* name;
+  const char *name;
 };
 
 #endif // ABSTRACT_ACTOR_HPP
