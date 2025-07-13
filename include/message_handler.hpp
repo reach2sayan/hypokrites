@@ -75,5 +75,4 @@ template <typename... Args> struct replies_t {
   using with = make_message_handler_t<ReturnType, Args...>;
 };
 
-
 #endif // MESSAGE_HANDLER_HPP

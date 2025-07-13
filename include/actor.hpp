@@ -17,25 +17,33 @@ private:
   struct ActorStateBase {
     virtual constexpr ActorStateBase &get_state() = 0;
   };
-  template <typename TState> struct ActorState : ActorStateBase {
-    TState state;
-  public:
-    constexpr ActorState(auto &&state_)
-        : state(std::forward<decltype(state_)>(state_)) {}
-    constexpr ActorStateBase &get_state() { return *this; }
-  };
+  template <typename TState> struct ActorState;
   std::unique_ptr<ActorStateBase> state;
+
 public:
-  ActorStateBase& get_state() { return state->get_state(); }
-  static constexpr ActorStateBase& get_state(Actor &actor) {
+  ActorStateBase &get_state() { return state->get_state(); }
+  static constexpr ActorStateBase &get_state(Actor &actor) {
     return actor.get_state();
   }
+  template <typename TState>
+  using state_reference =
+      decltype(std::declval<ActorState<TState>>().get_state());
+};
+
+template <typename TState> struct Actor::ActorState : ActorStateBase {
+  TState state;
+
+public:
+  constexpr ActorState(auto &&state_)
+      : state(std::forward<decltype(state_)>(state_)) {}
+  constexpr ActorStateBase &get_state() { return *this; }
 };
 
 template <CMessage... TMessages> class TypedActor : public Actor {
   Behaviours<Actor, TMessages...> behaviours;
 
 public:
+  using base = Actor;
   using behaviours_t = Behaviours<Actor, TMessages...>;
   constexpr auto become(CMessage auto &&...messages)
     requires(std::same_as<TMessages, std::remove_cv_t<decltype(messages)>> &&

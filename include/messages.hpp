@@ -21,9 +21,9 @@ class MailBox {
   std::tuple<std::string, double> message;
 };
 
-template<typename TCallable>
-class Message {
+template <typename TCallable> class Message {
   TCallable f;
+
 public:
   template <typename... TArgs>
     requires(std::invocable<TCallable, TArgs...>)
@@ -41,7 +41,7 @@ concept CMessage =
     std::invocable<TMessage> && std::is_default_constructible_v<TMessage> &&
     std::copy_constructible<TMessage> && std::move_constructible<TMessage>;
 
-static_assert(CMessage<Message<void(*)()>>);
+static_assert(CMessage<Message<void (*)()>>);
 static_assert(CMessage<Message<std::function<void()>>>);
 static_assert(CMessage<Message<std::function<void()>>>);
 #endif // MAILBOX_HPP
