@@ -32,9 +32,9 @@ public:
   }
 };
 
-template <CActor TActor> class DefaultMessage : public Message<Callable> {};
-template <CActor TActor> class DownMessage : public Message<Callable> {};
-template <CActor TActor> class ExitMessage : public Message<Callable> {};
+template <CBaseActor TActor> class DefaultMessage : public Message<Callable> {};
+template <CBaseActor TActor> class DownMessage : public Message<Callable> {};
+template <CBaseActor TActor> class ExitMessage : public Message<Callable> {};
 
 template <typename TMessage>
 concept CMessage =

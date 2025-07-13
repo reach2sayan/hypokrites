@@ -12,7 +12,7 @@
 
 #include "messages.hpp"
 
-template <CActor TActor> class BaseMessageHandler {
+template <CBaseActor TActor> class BaseMessageHandler {
 public:
   using exit_handler_t = std::function<void(ExitMessage<TActor> &)>;
   using down_handler_t = std::function<void(DownMessage<TActor> &)>;

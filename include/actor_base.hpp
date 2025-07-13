@@ -31,9 +31,9 @@ public:
 };
 
 template<typename TActor>
-concept CActor = std::derived_from<TActor,ActorBase>;
+concept CBaseActor = std::derived_from<TActor,ActorBase>;
 
-template <CActor TActor, typename>
+template <CBaseActor TActor, typename>
 class MonitoredActor : public IMonitor<TActor> {
   std::list<TActor *> monitors;
 
@@ -49,8 +49,8 @@ public:
   }
 };
 
-template <CActor TActor> class BaseMessageHandler;
-template <CActor TActor, typename> class ScheduledActor {
+template <CBaseActor TActor> class BaseMessageHandler;
+template <CBaseActor TActor, typename> class ScheduledActor {
 private:
   BaseMessageHandler<TActor> base_handler;
   using exit_handler_t = BaseMessageHandler<TActor>::exit_handler_t;
@@ -69,6 +69,16 @@ public:
     base_handler.set_down_handler(std::move(handler));
   }
 };
+
+template<typename T>
+concept CActor = requires(T&& t) {
+  { t.address() } -> std::same_as<actor_address_t>;
+  { t.system() } -> std::same_as<ActorSystem &>;
+  { t.quit() } -> std::same_as<void>;
+  { t.set_exit_handler(std::declval<typename T::exit_handler_t>()) } -> std::same_as<void>;
+  { t.set_default_handler(std::declval<typename T::default_handler_t>()) } -> std::same_as<void>;
+  { t.set_down_handler(std::declval<typename T::down_handler_t>()) } -> std::same_as<void>;
+} && SupportsMonitor<T>;
 
 class Actor;
 
