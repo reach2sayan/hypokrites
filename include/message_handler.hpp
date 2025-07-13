@@ -10,7 +10,7 @@
 #include <tuple>
 #include <utility>
 
-#include "mailbox.hpp"
+#include "messages.hpp"
 
 template <CActor TActor> class BaseMessageHandler {
 public:
@@ -57,7 +57,6 @@ public:
       : MessageHandler<TCallables...>(std::move(handlers)...),
         final_handler(std::move(final_handler)) {}
 };
-
 
 template <typename ReturnType, typename... Args> struct make_message_handler {
   using ret_t = ReturnType;

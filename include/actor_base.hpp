@@ -50,7 +50,6 @@ public:
 };
 
 template <CActor TActor> class BaseMessageHandler;
-
 template <CActor TActor, typename> class ScheduledActor {
 private:
   BaseMessageHandler<TActor> base_handler;
@@ -72,5 +71,8 @@ public:
 };
 
 class Actor;
+
+template<typename TState>
+class ActorState;
 
 #endif // ACTOR_BASE_HPP

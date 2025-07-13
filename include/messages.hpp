@@ -7,7 +7,6 @@
 #pragma once
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_generators.hpp>
-#include <functional>
 #include <stack>
 
 #include "actor_base.hpp"
@@ -15,7 +14,7 @@
 
 using mail_id_t = boost::uuids::uuid;
 
-class Mail {
+class MailBox {
   Actor *actor;
   mail_id_t id;
   std::stack<std::function<void()>> stages;
@@ -34,9 +33,7 @@ public:
 };
 
 template <CActor TActor> class DefaultMessage : public Message<Callable> {};
-
 template <CActor TActor> class DownMessage : public Message<Callable> {};
-
 template <CActor TActor> class ExitMessage : public Message<Callable> {};
 
 template <typename TMessage>

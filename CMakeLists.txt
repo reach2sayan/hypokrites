@@ -9,12 +9,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 find_package(Boost REQUIRED)
 set(HEADERS include/actor.hpp
-        include/mailbox.hpp
+        include/messages.hpp
         include/message_handler.hpp
         include/monitors.hpp
         include/utility/meta.hpp
         include/utility/callable.hpp
         include/actor_base.hpp
+        include/actor_system.hpp
 )
 
 add_library(hypokrites ${HEADERS} src/main.cpp
