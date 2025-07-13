@@ -11,7 +11,6 @@
 #include <list>
 #include <memory>
 
-#include "message_handler.hpp"
 #include "monitors.hpp"
 #include "utility/meta.hpp"
 
@@ -31,7 +30,10 @@ public:
   virtual ~ActorBase() = default;
 };
 
-template <typename TActor, typename>
+template<typename TActor>
+concept CActor = std::derived_from<TActor,ActorBase>;
+
+template <CActor TActor, typename>
 class MonitoredActor : public IMonitor<TActor> {
   std::list<TActor *> monitors;
 
@@ -47,7 +49,10 @@ public:
   }
 };
 
-template <typename TActor, typename> class ScheduledActor {
+template <CActor TActor> class BaseMessageHandler;
+
+template <CActor TActor, typename> class ScheduledActor {
+private:
   BaseMessageHandler<TActor> base_handler;
   using exit_handler_t = BaseMessageHandler<TActor>::exit_handler_t;
   using down_handler_t = BaseMessageHandler<TActor>::down_handler_t;
@@ -66,4 +71,6 @@ public:
   }
 };
 
-#endif //ACTOR_BASE_HPP
+class Actor;
+
+#endif // ACTOR_BASE_HPP

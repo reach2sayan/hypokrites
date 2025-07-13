@@ -10,10 +10,10 @@
 #include <functional>
 #include <stack>
 
+#include "actor_base.hpp"
 #include "utility/callable.hpp"
 
 using mail_id_t = boost::uuids::uuid;
-class Actor;
 
 class Mail {
   Actor *actor;
@@ -22,24 +22,29 @@ class Mail {
   std::tuple<std::string, double> message;
 };
 
+template<typename TCallable>
 class Message {
-  Callable f;
+  TCallable f;
 public:
-  template<typename... TArgs>
-  constexpr auto operator()(TArgs&&... args) const {
+  template <typename... TArgs>
+    requires(std::invocable<TCallable, TArgs...>)
+  constexpr auto operator()(TArgs &&...args) const {
     return f(std::forward<TArgs>(args)...);
   }
 };
 
-template <typename TActor> class DefaultMessage : public Message {};
+template <CActor TActor> class DefaultMessage : public Message<Callable> {};
 
-template <typename TActor> class DownMessage : public Message {};
+template <CActor TActor> class DownMessage : public Message<Callable> {};
 
-template <typename TActor> class ExitMessage : public Message {};
+template <CActor TActor> class ExitMessage : public Message<Callable> {};
 
 template <typename TMessage>
 concept CMessage =
     std::invocable<TMessage> && std::is_default_constructible_v<TMessage> &&
     std::copy_constructible<TMessage> && std::move_constructible<TMessage>;
 
+static_assert(CMessage<Message<void(*)()>>);
+static_assert(CMessage<Message<std::function<void()>>>);
+static_assert(CMessage<Message<std::function<void()>>>);
 #endif // MAILBOX_HPP
