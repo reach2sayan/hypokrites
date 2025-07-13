@@ -6,13 +6,11 @@
 #define ACTOR_BASE_HPP
 
 #pragma once
+#include "utility/meta.hpp"
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_generators.hpp>
 #include <list>
 #include <memory>
-
-#include "monitors.hpp"
-#include "utility/meta.hpp"
 
 using actor_address_t = boost::uuids::uuid;
 class ActorSystem;
@@ -33,24 +31,26 @@ public:
 template <typename TActor>
 concept CBaseActor = std::derived_from<TActor, ActorBase>;
 
-template <CBaseActor TActor, typename>
-class MonitoredActor : public IMonitor<TActor> {
+template <CBaseActor TActor, typename> class MonitoredActor : public TActor {
   std::list<TActor *> monitors;
 
 public:
-  virtual void add_monitor(TActor *observer) override {
-    monitors.push_back(std::move(observer));
-  }
-  virtual void remove_monitor(TActor *observer) override {
-    monitors.remove(observer);
-  }
-  virtual void notify() override {
+  void add_monitor(TActor *observer) { monitors.push_back(observer); }
+  void remove_monitor(TActor *observer) { monitors.remove(observer); }
+  void notify() {
     // TODO To be implemented
   }
 };
 
+template <typename T>
+concept SupportsMonitor = requires(T &&t) {
+  { t.add_monitor(std::declval<T &>()) } -> std::same_as<void>;
+  { t.remove_monitor(std::declval<T &>()) } -> std::same_as<void>;
+  { t.notify() } -> std::same_as<void>;
+};
+
 template <CBaseActor TActor> class BaseMessageHandler;
-template <CBaseActor TActor, typename> class ScheduledActor {
+template <CBaseActor TActor, typename> class ScheduledActor : public TActor {
 private:
   BaseMessageHandler<TActor> base_handler;
   using exit_handler_t = BaseMessageHandler<TActor>::exit_handler_t;
