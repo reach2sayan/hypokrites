@@ -14,6 +14,7 @@ set(HEADERS include/actor.hpp
         include/monitors.hpp
         include/utility/meta.hpp
         include/utility/callable.hpp
+        include/actor_base.hpp
 )
 
 add_library(hypokrites ${HEADERS} src/main.cpp

@@ -12,9 +12,11 @@
 #include <utility>
 
 template <typename TActor> class BaseMessageHandler {
-  using exit_handler_t = std::function<void(ExitMessage<TActor>&)>;
-  using down_handler_t = std::function<void(DownMessage<TActor>&)>;
-  using default_handler_t = std::function<void(DefaultMessage<TActor>&)>;
+public:
+  using exit_handler_t = std::function<void(ExitMessage<TActor> &)>;
+  using down_handler_t = std::function<void(DownMessage<TActor> &)>;
+  using default_handler_t = std::function<void(DefaultMessage<TActor> &)>;
+private:
   exit_handler_t exit_handler;
   down_handler_t down_handler;
   default_handler_t default_handler;
@@ -32,8 +34,7 @@ public:
   }
 };
 
-template <std::invocable... TCallables>
-class MessageHandler {
+template <std::invocable... TCallables> class MessageHandler {
   std::tuple<TCallables...> handlers;
   MessageHandler or_else(MessageHandler other);
 
@@ -43,9 +44,11 @@ public:
   }
 };
 
-template <typename TActor, std::invocable FinalCallable, std::invocable... TCallables>
+template <typename TActor, std::invocable FinalCallable,
+          std::invocable... TCallables>
 class Behaviours : public MessageHandler<TActor, TCallables...> {
   FinalCallable final_handler;
+
 public:
   Behaviours(TCallables... handlers, FinalCallable final_handler)
       : MessageHandler<TCallables...>(std::move(handlers)...),

@@ -23,4 +23,21 @@ template <class Base, class Derived = Base> struct extend {
   using with = typename extend_helper<Derived, Base, Mixins...>::type;
 };
 
+template <typename ReturnType, typename... Args> struct make_message_handler {
+  using ret_t = ReturnType;
+  using args_t = std::tuple<Args...>;
+  using behaviour_t = std::function<ret_t(Args...)>;
+  using message_t = MessageHandler<behaviour_t>;
+};
+
+template <typename ReturnType, typename... Args>
+using make_message_handler_t =
+    typename make_message_handler<ReturnType, Args...>::message_t;
+
+template <typename... Args> struct replies_t {
+  using type = std::tuple<Args...>;
+  template <typename ReturnType>
+  using with = make_message_handler_t<ReturnType, Args...>;
+};
+
 #endif // META_HPP
