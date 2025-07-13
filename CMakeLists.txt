@@ -12,7 +12,9 @@ set(HEADERS include/actor.hpp
         include/mailbox.hpp
         include/message_handler.hpp
         include/monitors.hpp
-        include/utility/meta.hpp)
+        include/utility/meta.hpp
+        include/utility/callable.hpp
+)
 
 add_library(hypokrites ${HEADERS} src/main.cpp
         src/main.cpp)

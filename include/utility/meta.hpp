@@ -9,25 +9,18 @@
 template <class D, class B, template <class, class> class... Ms>
 struct extend_helper;
 
-template <class D, class B>
-struct extend_helper<D, B> {
+template <class D, class B> struct extend_helper<D, B> {
   using type = B;
 };
 
 template <class D, class B, template <class, class> class M,
-      template <class, class> class... Ms>
-struct extend_helper<D, B, M, Ms...> : extend_helper<D, M<B, D>, Ms...> {
-  // no content
-};
-
+          template <class, class> class... Ms>
+struct extend_helper<D, B, M, Ms...> : extend_helper<D, M<B, D>, Ms...> {};
 
 // extend<ar, T>::with<ob, fo> == fo<ob<ar, T>, T>
-template <class Base, class Derived = Base>
-struct extend {
-
+template <class Base, class Derived = Base> struct extend {
   template <template <class, class> class... Mixins>
   using with = typename extend_helper<Derived, Base, Mixins...>::type;
 };
 
-
-#endif //META_HPP
+#endif // META_HPP

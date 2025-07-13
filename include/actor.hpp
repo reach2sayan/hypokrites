@@ -12,6 +12,7 @@
 
 #include "monitors.hpp"
 #include "utility/meta.hpp"
+#include "message_handler.hpp"
 
 using actor_address_t = boost::uuids::uuid;
 class ActorSystem;
@@ -45,9 +46,28 @@ public:
   }
 };
 
+template<typename TActor, typename>
+class ScheduledActor {
+  BaseMessageHandler<TActor> base_handler;
+  using BaseMessageHandler<TActor>::exit_handler_t;
+  using BaseMessageHandler<TActor>::down_handler_t;
+  using BaseMessageHandler<TActor>::default_handler_t;
+public:
+  constexpr void quit();
+  constexpr void set_exit_handler(exit_handler_t handler) {
+    base_handler.set_exit_handler(std::move(handler));
+  }
+  constexpr void set_default_handler(default_handler_t handler) {
+    base_handler.set_default_handler(std::move(handler));
+  }
+  constexpr void set_down_handler(default_handler_t handler) {
+    base_handler.set_down_handler(std::move(handler));
+  }
+};
+
 // extend<ar, T>::with<ob, fo> == fo<ob<ar, T>, T>
 // IMonitor<ActorBase>
-class Actor : public extend<ActorBase>::with<MonitoredActor> {
+class Actor : public extend<ActorBase>::with<MonitoredActor, ScheduledActor> {
   const char *name;
 };
 
