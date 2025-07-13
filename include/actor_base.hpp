@@ -30,8 +30,8 @@ public:
   virtual ~ActorBase() = default;
 };
 
-template<typename TActor>
-concept CBaseActor = std::derived_from<TActor,ActorBase>;
+template <typename TActor>
+concept CBaseActor = std::derived_from<TActor, ActorBase>;
 
 template <CBaseActor TActor, typename>
 class MonitoredActor : public IMonitor<TActor> {
@@ -70,19 +70,26 @@ public:
   }
 };
 
-template<typename T>
-concept CActor = requires(T&& t) {
-  { t.address() } -> std::same_as<actor_address_t>;
-  { t.system() } -> std::same_as<ActorSystem &>;
+template <typename T>
+concept SupportsBaseHandlers = requires(T &&t) {
+  {
+    t.set_exit_handler(std::declval<typename T::exit_handler_t>())
+  } -> std::same_as<void>;
+  {
+    t.set_default_handler(std::declval<typename T::default_handler_t>())
+  } -> std::same_as<void>;
+  {
+    t.set_down_handler(std::declval<typename T::down_handler_t>())
+  } -> std::same_as<void>;
   { t.quit() } -> std::same_as<void>;
-  { t.set_exit_handler(std::declval<typename T::exit_handler_t>()) } -> std::same_as<void>;
-  { t.set_default_handler(std::declval<typename T::default_handler_t>()) } -> std::same_as<void>;
-  { t.set_down_handler(std::declval<typename T::down_handler_t>()) } -> std::same_as<void>;
-} && SupportsMonitor<T>;
+};
 
+template <typename T>
+concept CActor = requires(T &&t) {
+  requires CBaseActor<T> && SupportsMonitor<T> && SupportsBaseHandlers<T>;
+};
 class Actor;
 
-template<typename TState>
-class ActorState;
+template <typename TState> class ActorState;
 
 #endif // ACTOR_BASE_HPP
