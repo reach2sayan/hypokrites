@@ -37,6 +37,14 @@ template <CBaseActor TActor, typename> class MonitoredActor : public TActor {
 public:
   void add_monitor(TActor *observer) { monitors.push_back(observer); }
   void remove_monitor(TActor *observer) { monitors.remove(observer); }
+  void link(TActor *other) {
+    monitors.push_back(&other);
+    other->add_monitor(this);
+  }
+  void unlink(TActor *other) {
+    monitors.remove(&other);
+    other->remove_monitor(this);
+  }
   void notify() {
     // TODO To be implemented
   }
@@ -44,8 +52,10 @@ public:
 
 template <typename T>
 concept SupportsMonitor = requires(T &&t) {
-  { t.add_monitor(std::declval<T &>()) } -> std::same_as<void>;
-  { t.remove_monitor(std::declval<T &>()) } -> std::same_as<void>;
+  { t.add_monitor(std::declval<T *>()) } -> std::same_as<void>;
+  { t.remove_monitor(std::declval<T *>()) } -> std::same_as<void>;
+  { t.link(std::declval<T *>()) } -> std::same_as<void>;
+  { t.unlink(std::declval<T *>()) } -> std::same_as<void>;
   { t.notify() } -> std::same_as<void>;
 };
 
