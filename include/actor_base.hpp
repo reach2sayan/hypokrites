@@ -60,7 +60,7 @@ concept SupportsMonitor = requires(T &&t) {
   { t.notify() } -> std::same_as<void>;
 };
 
-template <CBaseActor TActor> class BaseMessageHandler;
+template <CBaseActor TActor, typename DefaultRet=void> class BaseMessageHandler;
 template <CBaseActor TActor, typename> class ScheduledActor : public TActor {
 private:
   BaseMessageHandler<TActor> base_handler;

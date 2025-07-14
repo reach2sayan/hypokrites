@@ -12,11 +12,11 @@
 
 #include "messages.hpp"
 
-template <CBaseActor TActor> class BaseMessageHandler {
+template <CBaseActor TActor, typename DefaultRet> class BaseMessageHandler {
 public:
   using exit_handler_t = std::function<void(ExitMessage<TActor> &)>;
   using down_handler_t = std::function<void(DownMessage<TActor> &)>;
-  using default_handler_t = std::function<void(DefaultMessage<TActor> &)>;
+  using default_handler_t = std::function<DefaultRet(DefaultMessage<TActor> &)>;
 
 private:
   exit_handler_t exit_handler;
