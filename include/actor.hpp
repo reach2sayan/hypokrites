@@ -53,6 +53,7 @@ public:
                                   std::forward<messages>(messages)...));
   }
 };
-using cell = TypedActor<replies_to<int>::with<void>>;
-TD<cell> _{};
+
+using cell = TypedActor<replies_to<int>::with<void>, replies_to<int>::with<double>>;
+constexpr cell cell_t;
 #endif // ABSTRACT_ACTOR_HPP

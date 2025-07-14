@@ -21,12 +21,12 @@ class MailBox {
   std::tuple<std::string, double> message;
 };
 
-template <typename TCallable> class Message {
-  TCallable f;
-
+template <typename Ret, typename... Args> class Message {
+  std::function<Ret(Args...)> f;
+  using callable_t = std::function<Ret(Args...)>;
 public:
   template <typename... TArgs>
-    requires(std::invocable<TCallable, TArgs...>)
+    requires(std::invocable<decltype(f), TArgs...>)
   constexpr auto operator()(TArgs &&...args) const {
     return f(std::forward<TArgs>(args)...);
   }
@@ -39,9 +39,10 @@ template <CBaseActor TActor> class ExitMessage : public Message<Callable> {};
 template <typename TMessage>
 concept CMessage =
     std::invocable<TMessage> && std::is_default_constructible_v<TMessage> &&
-    std::copy_constructible<TMessage> && std::move_constructible<TMessage>;
+    std::copy_constructible<TMessage>;
 
 static_assert(CMessage<Message<void (*)()>>);
 static_assert(CMessage<Message<std::function<void()>>>);
 static_assert(CMessage<Message<std::function<void()>>>);
+static_assert(CMessage<Message<std::function<void(int)>>>);
 #endif // MAILBOX_HPP
