@@ -47,8 +47,8 @@ public:
   }
 };
 
-template <CActor TActor, std::invocable FinalCallable,
-          std::invocable... TCallables>
+template <CActor TActor, CMessage FinalCallable,
+          CMessage... TCallables>
 class Behaviours : public MessageHandler<TActor, TCallables...> {
   FinalCallable final_handler;
 

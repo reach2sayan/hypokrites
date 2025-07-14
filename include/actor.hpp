@@ -18,9 +18,11 @@ private:
     virtual constexpr ActorStateBase &get_state() = 0;
   };
   template <typename TState> struct ActorState;
+
   std::unique_ptr<ActorStateBase> state;
 
 public:
+  Actor(ActorSystem& sys_) : extend<ActorBase>::with<MonitoredActor, ScheduledActor>{sys_}, state{nullptr} {}
   constexpr ActorStateBase &get_state() { return state->get_state(); }
   static constexpr ActorStateBase &get_state(Actor &actor) {
     return actor.get_state();
@@ -45,6 +47,7 @@ template <CMessage... TMessages> class TypedActor : public Actor {
 public:
   using base = Actor;
   using behaviours_t = Behaviours<Actor, TMessages...>;
+  TypedActor(ActorSystem &sys_) : Actor{sys_} {}
   constexpr auto become(CMessage auto &&...messages)
     requires(std::same_as<TMessages, std::remove_cv_t<decltype(messages)>> &&
              ...)

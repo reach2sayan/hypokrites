@@ -35,6 +35,7 @@ template <CBaseActor TActor, typename> class MonitoredActor : public TActor {
   std::list<TActor *> monitors;
 
 public:
+  MonitoredActor(ActorSystem &sys_) : TActor{sys_} {}
   void add_monitor(TActor *observer) { monitors.push_back(observer); }
   void remove_monitor(TActor *observer) { monitors.remove(observer); }
   void link(TActor *other) {
@@ -68,6 +69,7 @@ private:
   using default_handler_t = BaseMessageHandler<TActor>::default_handler_t;
 
 public:
+  ScheduledActor(ActorSystem &sys_) : TActor{sys_} {}
   constexpr void quit();
   constexpr void set_exit_handler(exit_handler_t handler) {
     base_handler.set_exit_handler(std::move(handler));
@@ -96,7 +98,7 @@ concept SupportsBaseHandlers = requires(T &&t) {
 
 template <typename T>
 concept CActor = requires(T &&t) {
-  requires CBaseActor<T> && SupportsMonitor<T> && SupportsBaseHandlers<T>;
+  requires CBaseActor<T> && SupportsMonitor<T>/* && SupportsBaseHandlers<T>*/;
 };
 class Actor;
 
