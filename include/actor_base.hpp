@@ -21,11 +21,11 @@ private:
   ActorSystem &sys;
 
 public:
-  ActorBase(ActorSystem &sys_)
+  constexpr ActorBase(ActorSystem &sys_)
       : addr(boost::uuids::random_generator()()), sys(sys_) {}
-  virtual actor_address_t address() const final { return addr; }
-  virtual ActorSystem &system() final { return sys; }
-  virtual ~ActorBase() = default;
+  actor_address_t address() const { return addr; }
+  ActorSystem &system() { return sys; }
+  ~ActorBase() = default;
 };
 
 template <typename TActor>
@@ -35,18 +35,18 @@ template <CBaseActor TActor, typename> class MonitoredActor : public TActor {
   std::list<TActor *> monitors;
 
 public:
-  MonitoredActor(ActorSystem &sys_) : TActor{sys_} {}
-  void add_monitor(TActor *observer) { monitors.push_back(observer); }
-  void remove_monitor(TActor *observer) { monitors.remove(observer); }
-  void link(TActor *other) {
+  constexpr MonitoredActor(ActorSystem &sys_) : TActor{sys_} {}
+  constexpr void add_monitor(TActor *observer) { monitors.push_back(observer); }
+  constexpr void remove_monitor(TActor *observer) { monitors.remove(observer); }
+  constexpr void link(TActor *other) {
     monitors.push_back(&other);
     other->add_monitor(this);
   }
-  void unlink(TActor *other) {
+  constexpr void unlink(TActor *other) {
     monitors.remove(&other);
     other->remove_monitor(this);
   }
-  void notify() {
+  constexpr void notify() {
     // TODO To be implemented
   }
 };
