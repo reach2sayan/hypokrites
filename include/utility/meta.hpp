@@ -6,8 +6,7 @@
 #define META_HPP
 #pragma once
 
-template<typename...>
-struct TD;
+template <typename...> struct TD;
 
 template <class D, class B, template <class, class> class... Ms>
 struct extend_helper;

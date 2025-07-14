@@ -22,7 +22,9 @@ private:
   std::unique_ptr<ActorStateBase> state;
 
 public:
-  Actor(ActorSystem& sys_) : extend<ActorBase>::with<MonitoredActor, ScheduledActor>{sys_}, state{nullptr} {}
+  Actor(ActorSystem &sys_)
+      : extend<ActorBase>::with<MonitoredActor, ScheduledActor>{sys_},
+        state{nullptr} {}
   constexpr ActorStateBase &get_state() { return state->get_state(); }
   static constexpr ActorStateBase &get_state(Actor &actor) {
     return actor.get_state();

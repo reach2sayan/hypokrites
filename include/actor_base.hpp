@@ -98,10 +98,7 @@ concept SupportsBaseHandlers = requires(T &&t) {
 
 template <typename T>
 concept CActor = requires(T &&t) {
-  requires CBaseActor<T> && SupportsMonitor<T>/* && SupportsBaseHandlers<T>*/;
+  requires CBaseActor<T> && SupportsMonitor<T> && SupportsBaseHandlers<T>;
 };
 class Actor;
-
-template <typename TState> class ActorState;
-
 #endif // ACTOR_BASE_HPP

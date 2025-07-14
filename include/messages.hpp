@@ -24,11 +24,14 @@ class MailBox {
 template <typename Ret, typename... Args> class Message {
   std::function<Ret(Args...)> f;
   using callable_t = std::function<Ret(Args...)>;
+
 public:
-  template <typename... TArgs>
-    requires(std::invocable<decltype(f), TArgs...>)
-  constexpr auto operator()(TArgs &&...args) const {
-    return f(std::forward<TArgs>(args)...);
+  Message() = default;
+  constexpr Message(std::invocable<Ret, Args...> auto f_) : f(std::move(f_)) {}
+  constexpr auto operator()(auto &&...args) const
+    requires(std::invocable<decltype(f), decltype(args)...>)
+  {
+    return f(std::forward<decltype(args)>(args)...);
   }
 };
 
@@ -41,8 +44,12 @@ concept CMessage =
     std::invocable<TMessage> && std::is_default_constructible_v<TMessage> &&
     std::copy_constructible<TMessage>;
 
+static_assert(CMessage<void (*)()>);
 static_assert(CMessage<Message<void (*)()>>);
 static_assert(CMessage<Message<std::function<void()>>>);
+static_assert(CMessage<std::function<void()>>);
 static_assert(CMessage<Message<std::function<void()>>>);
+static_assert(CMessage<std::function<void()>>);
+static_assert(CMessage<Message<std::function<void(int)>>>);
 static_assert(CMessage<Message<std::function<void(int)>>>);
 #endif // MAILBOX_HPP
