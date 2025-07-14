@@ -24,7 +24,7 @@ private:
   default_handler_t default_handler;
 
 public:
-  BaseMessageHandler(std::invocable auto e) : exit_handler(e) {}
+  BaseMessageHandler() = default;
   constexpr void set_exit_handler(std::invocable auto handler) {
     exit_handler = std::move(handler);
   }
