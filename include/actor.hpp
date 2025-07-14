@@ -21,7 +21,7 @@ private:
   std::unique_ptr<ActorStateBase> state;
 
 public:
-  ActorStateBase &get_state() { return state->get_state(); }
+  constexpr ActorStateBase &get_state() { return state->get_state(); }
   static constexpr ActorStateBase &get_state(Actor &actor) {
     return actor.get_state();
   }
@@ -36,7 +36,7 @@ template <typename TState> struct Actor::ActorState : ActorStateBase {
 public:
   constexpr ActorState(auto &&state_)
       : state(std::forward<decltype(state_)>(state_)) {}
-  constexpr ActorStateBase &get_state() { return *this; }
+  virtual constexpr ActorStateBase &get_state() override final { return *this; }
 };
 
 template <CMessage... TMessages> class TypedActor : public Actor {
@@ -53,5 +53,6 @@ public:
                                   std::forward<messages>(messages)...));
   }
 };
-
+using cell = TypedActor<replies_to<int>::with<void>>;
+TD<cell> _{};
 #endif // ABSTRACT_ACTOR_HPP
