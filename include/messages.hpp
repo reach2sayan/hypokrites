@@ -35,9 +35,9 @@ public:
   }
 };
 
-template <CBaseActor TActor> class DefaultMessage : public Message<Callable> {};
-template <CBaseActor TActor> class DownMessage : public Message<Callable> {};
-template <CBaseActor TActor> class ExitMessage : public Message<Callable> {};
+template <CBaseActor TActor> class ExitMessage : public Message<void> {};
+template <CBaseActor TActor> class DownMessage : public Message<void> {};
+template <CBaseActor TActor, typename Ret, typename... Args> class DefaultMessage : public Message<Ret,Args...> {};
 
 template <typename TMessage>
 concept CMessage =
