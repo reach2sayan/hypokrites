@@ -6,20 +6,29 @@ set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
 set(BUILD_SHARED_LIBS ON)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
-
+add_compile_options(-Wfatal-errors)
 find_package(Boost REQUIRED)
+
+set(UTILITY_HEADERS
+        include/utility/meta.hpp
+        include/utility/callable.hpp
+        include/utility/thread_pool.hpp
+        include/utility/threadsafe_list.hpp
+        include/utility/threadsafe_queue.hpp
+)
+
 set(HEADERS include/actor.hpp
         include/messages.hpp
         include/message_handler.hpp
-        include/utility/meta.hpp
-        include/utility/callable.hpp
         include/actor_base.hpp
         include/actor_system.hpp
+        include/scheduler.hpp
         actor_state.hpp
 )
 
-add_library(hypokrites ${HEADERS} src/main.cpp
+add_library(hypokrites ${HEADERS} ${UTILITY_HEADERS}
         src/main.cpp)
+
 target_include_directories(${PROJECT_NAME} PUBLIC
         ${PROJECT_BINARY_DIR}
         ${PROJECT_SOURCE_DIR}/include

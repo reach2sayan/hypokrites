@@ -25,7 +25,7 @@ private:
   std::unique_ptr<ActorStateBase> state;
 
 public:
-  Actor(ActorSystem &sys_) : base{sys_}, state{nullptr} {}
+  constexpr Actor(ActorSystem &sys_) : base{sys_}, state{nullptr} {}
   constexpr ActorStateBase &get_state() { return state->get_state(); }
   static constexpr ActorStateBase &get_state(Actor &actor) {
     return actor.get_state();
@@ -48,17 +48,17 @@ public:
 };
 
 template <CMessage... TMessages> class TypedActor : public Actor {
-  Behaviours<Actor, TMessages...> behaviours;
+  Behaviours<TMessages...> behaviours;
 
 public:
   using base = Actor;
-  using behaviours_t = Behaviours<Actor, TMessages...>;
-  TypedActor(ActorSystem &sys_) : Actor{sys_} {}
+  using behaviours_t = Behaviours<TMessages...>;
+  constexpr TypedActor(ActorSystem &sys_) : Actor{sys_} {}
   constexpr auto become(CMessage auto &&...messages)
     requires(std::same_as<TMessages, std::remove_cv_t<decltype(messages)>> &&
              ...)
   {
-    std::exchange(behaviours, Behaviours<Actor, TMessages...>(
+    std::exchange(behaviours, Behaviours<TMessages...>(
                                   std::forward<messages>(messages)...));
   }
 };

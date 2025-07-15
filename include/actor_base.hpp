@@ -7,6 +7,8 @@
 
 #pragma once
 #include "utility/meta.hpp"
+#include "utility/callable.hpp"
+#include "utility/threadsafe_queue.hpp"
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_generators.hpp>
 #include <list>
@@ -19,13 +21,21 @@ class ActorBase {
 private:
   const actor_address_t addr;
   ActorSystem &sys;
+  Queue<Callable> queue;
 
 public:
   constexpr ActorBase(ActorSystem &sys_)
-      : addr(boost::uuids::random_generator()()), sys(sys_) {}
+      : addr(boost::uuids::random_generator()()), sys{sys_}, queue{}  {}
   actor_address_t address() const { return addr; }
-  ActorSystem &system() { return sys; }
+  constexpr ActorSystem &system() { return sys; }
   ~ActorBase() = default;
+  constexpr bool operator==(const ActorBase &other) const {
+    return addr == other.addr;
+  }
+  constexpr auto get_queue_size() const { return queue.get_size(); };
+  decltype(auto) get_queue_ref() { return &queue; };
+  decltype(auto) get_queue_ref() const { return &queue; };
+
 };
 
 template <typename TActor>
@@ -62,6 +72,7 @@ concept SupportsMonitor = requires(T &&t) {
 
 template <CBaseActor TActor, typename DefaultRet = void, typename... Args>
 class BaseMessageHandler;
+
 template <CBaseActor TActor, typename> class ScheduledActor : public TActor {
 private:
   BaseMessageHandler<TActor> base_handler;
@@ -72,7 +83,7 @@ private:
       BaseMessageHandler<TActor, DefaultRet, Args...>::default_handler_t;
 
 public:
-  ScheduledActor(ActorSystem &sys_) : TActor{sys_} {}
+  constexpr ScheduledActor(ActorSystem &sys_) : TActor{sys_} , base_handler{} {}
   constexpr void quit();
   constexpr void set_exit_handler(exit_handler_t handler) {
     base_handler.set_exit_handler(std::move(handler));

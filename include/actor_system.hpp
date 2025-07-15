@@ -6,11 +6,18 @@
 #define ACTOR_SYSTEM_HPP
 
 #include "actor.hpp"
-class ActorSystem {
-  std::vector<std::unique_ptr<Actor>> actors;
-};
+#include "scheduler.hpp"
 
-using cell = TypedActor<replies_to<int>::with<void>, replies_to<int>::with<double>>;
-ActorSystem sys;
-constexpr cell cell_t{sys};
+class ActorSystem {
+private:
+  Scheduler scheduler;
+public:
+  ActorSystem() : scheduler{std::make_unique<ThreadPool<>>()} {}
+  template <typename TActor> constexpr void subscribe(TActor &actor) {
+    scheduler.subscribe(actor);
+  }
+  template <typename ActorType> constexpr void unsubscribe(ActorType &actor) {
+    scheduler.unsubscribe(actor);
+  }
+};
 #endif //ACTOR_SYSTEM_HPP

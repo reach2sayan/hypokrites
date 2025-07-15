@@ -26,7 +26,7 @@ private:
   default_handler_t default_handler;
 
 public:
-  BaseMessageHandler() = default;
+  constexpr BaseMessageHandler() = default;
   constexpr void set_exit_handler(std::invocable auto handler) {
     exit_handler = std::move(handler);
   }
@@ -41,20 +41,21 @@ public:
 template <typename... TCallables> class MessageHandler {
 private:
   std::tuple<TCallables...> handlers;
-  MessageHandler or_else(MessageHandler other);
+  constexpr MessageHandler or_else(MessageHandler other);
 
 public:
-  MessageHandler operator|(MessageHandler other) {
+  constexpr MessageHandler operator|(MessageHandler other) {
     return or_else(std::move(other));
   }
 };
 
-template <CActor TActor, CMessage FinalCallable, CMessage... TCallables>
-class Behaviours : public MessageHandler<TActor, TCallables...> {
+template <CMessage FinalCallable, CMessage... TCallables>
+class Behaviours : public MessageHandler<TCallables...> {
   FinalCallable final_handler;
 
 public:
-  Behaviours(TCallables... handlers, FinalCallable final_handler)
+  constexpr Behaviours() = default;
+  constexpr Behaviours(TCallables... handlers, FinalCallable final_handler)
       : MessageHandler<TCallables...>(std::move(handlers)...),
         final_handler(std::move(final_handler)) {}
 };

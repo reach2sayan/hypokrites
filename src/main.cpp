@@ -1,9 +1,10 @@
 //
 // Created by sayan on 7/10/25.
 //
-#include <actor.hpp>
+#include <actor_system.hpp>
+using cell = TypedActor<replies_to<int>::with<void>, replies_to<int>::with<double>>;
 int main() {
-    // This is a placeholder for the main function.
-    // You can add your code here to implement the desired functionality.
+    ActorSystem sys{};
+    cell cell_t{sys};
     return 0;
 }
