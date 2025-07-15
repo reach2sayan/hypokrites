@@ -60,14 +60,16 @@ concept SupportsMonitor = requires(T &&t) {
   { t.notify() } -> std::same_as<void>;
 };
 
-template <CBaseActor TActor, typename DefaultRet = void, typename... Args> class BaseMessageHandler;
+template <CBaseActor TActor, typename DefaultRet = void, typename... Args>
+class BaseMessageHandler;
 template <CBaseActor TActor, typename> class ScheduledActor : public TActor {
 private:
   BaseMessageHandler<TActor> base_handler;
   using exit_handler_t = BaseMessageHandler<TActor>::exit_handler_t;
   using down_handler_t = BaseMessageHandler<TActor>::down_handler_t;
-  template<typename DefaultRet, typename... Args>
-  using default_handler_t = BaseMessageHandler<TActor, DefaultRet, Args...>::default_handler_t;
+  template <typename DefaultRet, typename... Args>
+  using default_handler_t =
+      BaseMessageHandler<TActor, DefaultRet, Args...>::default_handler_t;
 
 public:
   ScheduledActor(ActorSystem &sys_) : TActor{sys_} {}
@@ -75,8 +77,9 @@ public:
   constexpr void set_exit_handler(exit_handler_t handler) {
     base_handler.set_exit_handler(std::move(handler));
   }
-  template<typename DefaultRet, typename... Args>
-  constexpr void set_default_handler(default_handler_t<DefaultRet,Args...> handler) {
+  template <typename DefaultRet, typename... Args>
+  constexpr void
+  set_default_handler(default_handler_t<DefaultRet, Args...> handler) {
     base_handler.set_default_handler(std::move(handler));
   }
   constexpr void set_down_handler(down_handler_t handler) {

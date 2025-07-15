@@ -8,6 +8,9 @@
 
 #include "actor_base.hpp"
 #include "message_handler.hpp"
+#include "utility/meta.hpp"
+#include <type_traits>
+#include <utility>
 
 // extend<ar, T>::with<ob, fo> == fo<ob<ar, T>, T>
 // IMonitor<ActorBase>
@@ -18,13 +21,11 @@ private:
     virtual constexpr ActorStateBase &get_state() = 0;
   };
   template <typename TState> struct ActorState;
-
+  using base = extend<ActorBase>::with<MonitoredActor, ScheduledActor>;
   std::unique_ptr<ActorStateBase> state;
 
 public:
-  Actor(ActorSystem &sys_)
-      : extend<ActorBase>::with<MonitoredActor, ScheduledActor>{sys_},
-        state{nullptr} {}
+  Actor(ActorSystem &sys_) : base{sys_}, state{nullptr} {}
   constexpr ActorStateBase &get_state() { return state->get_state(); }
   static constexpr ActorStateBase &get_state(Actor &actor) {
     return actor.get_state();
@@ -41,6 +42,9 @@ public:
   constexpr ActorState(auto &&state_)
       : state(std::forward<decltype(state_)>(state_)) {}
   virtual constexpr ActorStateBase &get_state() override final { return *this; }
+  ActorState(const ActorState &other) = delete;
+  ActorState(ActorState &) = delete;
+  ActorState &operator=(const ActorState &) = delete;
 };
 
 template <CMessage... TMessages> class TypedActor : public Actor {
